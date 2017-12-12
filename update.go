@@ -28,13 +28,16 @@ type setClause struct {
 	value  interface{}
 }
 
-func (d *updateData) ToSql() (sqlStr string, args []interface{}, err error) {
+func (d *updateData) ToSql() (sqlStr string, args []interface{}) {
+	var err error
 	if len(d.Table) == 0 {
 		err = fmt.Errorf("update statements must specify a table")
+		panic(err)
 		return
 	}
 	if len(d.SetClauses) == 0 {
 		err = fmt.Errorf("update statements must have at least one Set clause")
+		panic(err)
 		return
 	}
 
@@ -72,6 +75,7 @@ func (d *updateData) ToSql() (sqlStr string, args []interface{}, err error) {
 		sql.WriteString(" WHERE ")
 		args, err = appendToSql(d.WhereParts, sql, " AND ", args)
 		if err != nil {
+			panic(err)
 			return
 		}
 	}
@@ -97,6 +101,9 @@ func (d *updateData) ToSql() (sqlStr string, args []interface{}, err error) {
 	}
 
 	sqlStr, err = d.PlaceholderFormat.ReplacePlaceholders(sql.String())
+	if err != nil {
+		panic(err)
+	}
 	return
 }
 func getSetColumn(column string) (bool, string) {
@@ -128,7 +135,7 @@ func (b UpdateBuilder) PlaceholderFormat(f PlaceholderFormat) WhereConditions {
 // SQL methods
 
 // ToSql builds the query into a SQL string and bound args.
-func (b UpdateBuilder) ToSql() (string, []interface{}, error) {
+func (b UpdateBuilder) ToSql() (string, []interface{}) {
 	data := builder.GetStruct(b).(updateData)
 	return data.ToSql()
 }

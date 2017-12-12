@@ -21,13 +21,16 @@ type insertData struct {
 	Select            *SelectBuilder
 }
 
-func (d *insertData) ToSql() (sqlStr string, args []interface{}, err error) {
+func (d *insertData) ToSql() (sqlStr string, args []interface{}) {
+	var err error
 	if len(d.Into) == 0 {
 		err = errors.New("insert statements must specify a table")
+		panic(err)
 		return
 	}
 	if len(d.Values) == 0 && d.Select == nil {
 		err = errors.New("insert statements must have at least one set of values or select clause")
+		panic(err)
 		return
 	}
 
@@ -57,19 +60,24 @@ func (d *insertData) ToSql() (sqlStr string, args []interface{}, err error) {
 
 	if d.Select != nil {
 		args, err = d.appendSelectToSQL(sql, args)
+		if err != nil{
+			panic(err)
+		}
 	} else {
 		args, err = d.appendValuesToSQL(sql, args)
+		if err != nil {
+			return
+		}
 	}
-	if err != nil {
-		return
-	}
-
 	if len(d.Suffixes) > 0 {
 		sql.WriteString(" ")
 		args, _ = d.Suffixes.AppendToSql(sql, " ", args)
 	}
 
 	sqlStr, err = d.PlaceholderFormat.ReplacePlaceholders(sql.String())
+	if err != nil {
+		panic(err)
+	}
 	return
 }
 
@@ -106,10 +114,7 @@ func (d *insertData) appendSelectToSQL(w io.Writer, args []interface{}) ([]inter
 		return args, errors.New("select clause for insert statements are not set")
 	}
 
-	selectClause, sArgs, err := d.Select.ToSql()
-	if err != nil {
-		return args, err
-	}
+	selectClause, sArgs:= d.Select.ToSql()
 
 	io.WriteString(w, selectClause)
 	args = append(args, sArgs...)
@@ -137,7 +142,7 @@ func (b InsertBuilder) PlaceholderFormat(f PlaceholderFormat) InsertCondition {
 // SQL methods
 
 // ToSql builds the query into a SQL string and bound args.
-func (b InsertBuilder) ToSql() (string, []interface{}, error) {
+func (b InsertBuilder) ToSql() (string, []interface{}) {
 	data := builder.GetStruct(b).(insertData)
 	return data.ToSql()
 }

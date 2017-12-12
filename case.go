@@ -27,19 +27,18 @@ func (b *sqlizerBuffer) WriteSql(item Sqlizer) {
 
 	var str string
 	var args []interface{}
-	str, args, b.err = item.ToSql()
-
-	if b.err != nil {
-		return
-	}
+	str, args  = item.ToSql()
 
 	b.WriteString(str)
 	b.WriteByte(' ')
 	b.args = append(b.args, args...)
 }
 
-func (b *sqlizerBuffer) ToSql() (string, []interface{}, error) {
-	return b.String(), b.args, b.err
+func (b *sqlizerBuffer) ToSql() (string, []interface{}) {
+	if b.err != nil {
+		panic(b.err)
+	}
+	return b.String(), b.args
 }
 
 // whenPart is a helper structure to describe SQLs "WHEN ... THEN ..." expression
@@ -60,11 +59,10 @@ type caseData struct {
 }
 
 // ToSql implements Sqlizer
-func (d *caseData) ToSql() (sqlStr string, args []interface{}, err error) {
+func (d *caseData) ToSql() ( string, []interface{}) {
 	if len(d.WhenParts) == 0 {
-		err = errors.New("case expression must contain at lease one WHEN clause")
-
-		return
+		panic( errors.New("case expression must contain at lease one WHEN clause"))
+		return "",nil
 	}
 
 	sql := sqlizerBuffer{}
@@ -95,7 +93,7 @@ func (d *caseData) ToSql() (sqlStr string, args []interface{}, err error) {
 type CaseBuilder builder.Builder
 
 // ToSql builds the query into a SQL string and bound args.
-func (b CaseBuilder) ToSql() (string, []interface{}, error) {
+func (b CaseBuilder) ToSql() (string, []interface{}) {
 	data := builder.GetStruct(b).(caseData)
 	return data.ToSql()
 }

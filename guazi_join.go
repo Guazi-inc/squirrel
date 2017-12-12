@@ -20,13 +20,14 @@ type joinData struct {
 	Suffixes          exprs
 }
 
-func (d *joinData) ToSql() (sqlStr string, args []interface{}, err error) {
+func (d *joinData) ToSql() (sqlStr string, args []interface{}) {
 	sql := &bytes.Buffer{}
-
+	var err error
 	if len(d.Joins) > 0 {
 		sql.WriteString(" ")
 		args, err = appendToSql(d.Joins, sql, " ", args)
 		if err != nil {
+			panic(err)
 			return
 		}
 	}
@@ -35,6 +36,7 @@ func (d *joinData) ToSql() (sqlStr string, args []interface{}, err error) {
 		sql.WriteString(" WHERE ")
 		args, err = appendToSql(d.WhereParts, sql, " AND ", args)
 		if err != nil {
+			panic(err)
 			return
 		}
 	}
@@ -95,7 +97,7 @@ func (b JoinBuilder) PlaceholderFormat(f PlaceholderFormat) WhereConditions {
 // SQL methods
 
 // ToSql builds the query into a SQL string and bound args.
-func (b JoinBuilder) ToSql() (string, []interface{}, error) {
+func (b JoinBuilder) ToSql() (string, []interface{}) {
 	data := builder.GetStruct(b).(joinData)
 	return data.ToSql()
 }

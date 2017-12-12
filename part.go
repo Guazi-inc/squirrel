@@ -14,17 +14,17 @@ func newPart(pred interface{}, args ...interface{}) Sqlizer {
 	return &part{pred, args}
 }
 
-func (p part) ToSql() (sql string, args []interface{}, err error) {
+func (p part) ToSql() (sql string, args []interface{}) {
 	switch pred := p.pred.(type) {
 	case nil:
 		// no-op
 	case Sqlizer:
-		sql, args, err = pred.ToSql()
+		sql, args= pred.ToSql()
 	case string:
 		sql = pred
 		args = p.args
 	default:
-		err = fmt.Errorf("expected string or Sqlizer, not %T", pred)
+		panic(fmt.Errorf("expected string or Sqlizer, not %T", pred))
 	}
 	return
 }
@@ -32,14 +32,12 @@ func (p part) ToSql() (sql string, args []interface{}, err error) {
 func appendToSql(parts []Sqlizer, w io.Writer, sep string, args []interface{}) ([]interface{}, error) {
 	length := len(parts)
 	for i, p := range parts {
-		partSql, partArgs, err := p.ToSql()
-		if err != nil {
-			return nil, err
-		} else if len(partSql) == 0 {
+		partSql, partArgs := p.ToSql()
+		 if len(partSql) == 0 {
 			continue
 		}
 
-		_, err = io.WriteString(w, partSql)
+		_, err := io.WriteString(w, partSql)
 		if err != nil {
 			return nil, err
 		}

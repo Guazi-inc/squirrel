@@ -18,12 +18,14 @@ type whereData struct {
 	Suffixes          exprs
 }
 
-func (d *whereData) ToSql() (sqlStr string, args []interface{}, err error) {
+func (d *whereData) ToSql() (sqlStr string, args []interface{}) {
 	sql := &bytes.Buffer{}
+	var err error
 	if len(d.WhereParts) > 0 {
 		sql.WriteString(" WHERE ")
 		args, err = appendToSql(d.WhereParts, sql, " AND ", args)
 		if err != nil {
+			panic(err)
 			return
 		}
 	}
@@ -37,6 +39,7 @@ func (d *whereData) ToSql() (sqlStr string, args []interface{}, err error) {
 		sql.WriteString(" HAVING ")
 		args, err = appendToSql(d.HavingParts, sql, " AND ", args)
 		if err != nil {
+			panic(err)
 			return
 		}
 	}
@@ -62,6 +65,9 @@ func (d *whereData) ToSql() (sqlStr string, args []interface{}, err error) {
 	}
 
 	sqlStr, err = d.PlaceholderFormat.ReplacePlaceholders(sql.String())
+	if err != nil {
+		panic(err)
+	}
 	return
 }
 
@@ -85,7 +91,7 @@ func (b WhereBuilder) PlaceholderFormat(f PlaceholderFormat) WhereConditions {
 // SQL methods
 
 // ToSql builds the query into a SQL string and bound args.
-func (b WhereBuilder) ToSql() (string, []interface{}, error) {
+func (b WhereBuilder) ToSql() (string, []interface{}) {
 	data := builder.GetStruct(b).(whereData)
 	return data.ToSql()
 }

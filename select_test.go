@@ -34,9 +34,9 @@ func TestSelectBuilderToSql(t *testing.T) {
 		Offset(13).
 		Suffix("FETCH FIRST ? ROWS ONLY", 14)
 
-	sql, args, err := b.ToSql()
+	sql, args := b.ToSql()
 	log.Println("log sql", sql)
-	assert.NoError(t, err)
+	//assert.NoError(t, err)
 
 	expectedSql :=
 		"WITH prefix AS ? " +
@@ -67,19 +67,19 @@ func TestSelectBuilderToSql(t *testing.T) {
 //	assert.Equal(t, expectedArgs, args)
 //}
 
-func TestSelectBuilderToSqlErr(t *testing.T) {
-	_, _, err := Select().From("x").ToSql()
-	assert.Error(t, err)
-}
+//func TestSelectBuilderToSqlErr(t *testing.T) {
+//	_, _, err := Select().From("x").ToSql()
+//	assert.Error(t, err)
+//}
 
 //
 func TestSelectBuilderPlaceholders(t *testing.T) {
 	b := Select("test").Where("x = ? AND y = ?")
 
-	sql, _, _ := b.PlaceholderFormat(Question).ToSql()
+	sql, _ := b.PlaceholderFormat(Question).ToSql()
 	assert.Equal(t, "SELECT test WHERE x = ? AND y = ?", sql)
 
-	sql, _, _ = b.PlaceholderFormat(Dollar).ToSql()
+	sql, _ = b.PlaceholderFormat(Dollar).ToSql()
 	assert.Equal(t, "SELECT test WHERE x = $1 AND y = $2", sql)
 }
 
@@ -122,8 +122,8 @@ func TestSelectBuilderSimpleJoin(t *testing.T) {
 
 	b := Select("*").From("bar").Join("baz ON bar.foo = baz.foo")
 
-	sql, args, err := b.ToSql()
-	assert.NoError(t, err)
+	sql, args := b.ToSql()
+	//assert.NoError(t, err)
 
 	assert.Equal(t, expectedSql, sql)
 	assert.Equal(t, args, expectedArgs)
@@ -136,8 +136,8 @@ func TestSelectBuilderParamJoin(t *testing.T) {
 
 	b := Select("*").From("bar").Join("baz ON bar.foo = baz.foo AND baz.foo = ?", 42)
 
-	sql, args, err := b.ToSql()
-	assert.NoError(t, err)
+	sql, args := b.ToSql()
+	//assert.NoError(t, err)
 
 	assert.Equal(t, expectedSql, sql)
 	assert.Equal(t, args, expectedArgs)
@@ -160,8 +160,8 @@ func TestSelectBuilderParamJoin(t *testing.T) {
 //}
 
 func TestSelectWithOptions(t *testing.T) {
-	sql, _, err := Select("*").From("foo").Distinct().Options("SQL_NO_CACHE").ToSql()
+	sql, _ := Select("*").From("foo").Distinct().Options("SQL_NO_CACHE").ToSql()
 
-	assert.NoError(t, err)
+	//assert.NoError(t, err)
 	assert.Equal(t, "SELECT DISTINCT SQL_NO_CACHE * FROM foo", sql)
 }

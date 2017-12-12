@@ -21,11 +21,12 @@ type deleteData struct {
 	Suffixes          exprs
 }
 
-func (d *deleteData) ToSql() (sqlStr string, args []interface{}, err error) {
+func (d *deleteData) ToSql() (sqlStr  string,args  []interface{}) {
 	if len(d.From) == 0 {
-		err = fmt.Errorf("delete statements must specify a From table")
+		panic( fmt.Errorf("delete statements must specify a From table"))
 		return
 	}
+	var err error
 
 	sql := &bytes.Buffer{}
 
@@ -41,6 +42,7 @@ func (d *deleteData) ToSql() (sqlStr string, args []interface{}, err error) {
 		sql.WriteString(" WHERE ")
 		args, err = appendToSql(d.WhereParts, sql, " AND ", args)
 		if err != nil {
+			panic(err)
 			return
 		}
 	}
@@ -66,6 +68,9 @@ func (d *deleteData) ToSql() (sqlStr string, args []interface{}, err error) {
 	}
 
 	sqlStr, err = d.PlaceholderFormat.ReplacePlaceholders(sql.String())
+	if err != nil {
+		panic(err)
+	}
 	return
 }
 
@@ -89,7 +94,7 @@ func (b DeleteBuilder) PlaceholderFormat(f PlaceholderFormat) WhereConditions {
 // SQL methods
 
 // ToSql builds the query into a SQL string and bound args.
-func (b DeleteBuilder) ToSql() (string, []interface{}, error) {
+func (b DeleteBuilder) ToSql() (string, []interface{}) {
 	data := builder.GetStruct(b).(deleteData)
 	return data.ToSql()
 }

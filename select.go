@@ -23,9 +23,11 @@ type selectData struct {
 	Suffixes          exprs
 }
 
-func (d *selectData) ToSql() (sqlStr string, args []interface{}, err error) {
+func (d *selectData) ToSql() (sqlStr string, args []interface{}) {
+	var err error
 	if len(d.Columns) == 0 {
 		err = fmt.Errorf("select statements must have at least one result column")
+		panic(err)
 		return
 	}
 
@@ -46,6 +48,7 @@ func (d *selectData) ToSql() (sqlStr string, args []interface{}, err error) {
 	if len(d.Columns) > 0 {
 		args, err = appendToSql(d.Columns, sql, ", ", args)
 		if err != nil {
+			panic(err)
 			return
 		}
 	}
@@ -54,6 +57,7 @@ func (d *selectData) ToSql() (sqlStr string, args []interface{}, err error) {
 		sql.WriteString(" FROM ")
 		args, err = appendToSql([]Sqlizer{d.From}, sql, "", args)
 		if err != nil {
+			panic(err)
 			return
 		}
 	}
@@ -62,6 +66,7 @@ func (d *selectData) ToSql() (sqlStr string, args []interface{}, err error) {
 		sql.WriteString(" ")
 		args, err = appendToSql(d.Joins, sql, " ", args)
 		if err != nil {
+			panic(err)
 			return
 		}
 	}
@@ -70,6 +75,7 @@ func (d *selectData) ToSql() (sqlStr string, args []interface{}, err error) {
 		sql.WriteString(" WHERE ")
 		args, err = appendToSql(d.WhereParts, sql, " AND ", args)
 		if err != nil {
+			panic(err)
 			return
 		}
 	}
@@ -83,6 +89,7 @@ func (d *selectData) ToSql() (sqlStr string, args []interface{}, err error) {
 		sql.WriteString(" HAVING ")
 		args, err = appendToSql(d.HavingParts, sql, " AND ", args)
 		if err != nil {
+			panic(err)
 			return
 		}
 	}
@@ -108,6 +115,9 @@ func (d *selectData) ToSql() (sqlStr string, args []interface{}, err error) {
 	}
 
 	sqlStr, err = d.PlaceholderFormat.ReplacePlaceholders(sql.String())
+	if err != nil {
+		panic(err)
+	}
 	return
 }
 
@@ -131,7 +141,7 @@ func (b SelectBuilder) PlaceholderFormat(f PlaceholderFormat) WhereConditions {
 // SQL methods
 
 // ToSql builds the query into a SQL string and bound args.
-func (b SelectBuilder) ToSql() (string, []interface{}, error) {
+func (b SelectBuilder) ToSql() (string, []interface{}) {
 	data := builder.GetStruct(b).(selectData)
 	return data.ToSql()
 }

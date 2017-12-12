@@ -1,7 +1,7 @@
 package squirrel
 
 type WhereConditions interface {
-	ToSql() (string, []interface{}, error)
+	ToSql() (string, []interface{})
 	PlaceholderFormat(PlaceholderFormat) WhereConditions
 	Where(interface{}, ...interface{}) WhereConditions
 	Condition() WhereConditions
@@ -55,7 +55,7 @@ type DeleteCondition interface {
 	WhereConditions
 }
 type InsertCondition interface {
-	ToSql() (string, []interface{}, error)
+	ToSql() (string, []interface{})
 	PlaceholderFormat(PlaceholderFormat) InsertCondition
 	Prefix(string, ...interface{}) InsertCondition
 	Options(...string) InsertCondition

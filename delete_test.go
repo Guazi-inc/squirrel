@@ -16,8 +16,8 @@ func TestDeleteBuilderToSql(t *testing.T) {
 		Offset(3).
 		Suffix("RETURNING ?", 4)
 
-	sql, args, err := b.ToSql()
-	assert.NoError(t, err)
+	sql, args := b.ToSql()
+	//assert.NoError(t, err)
 
 	expectedSql :=
 		"WITH prefix AS ? " +
@@ -29,10 +29,10 @@ func TestDeleteBuilderToSql(t *testing.T) {
 	assert.Equal(t, expectedArgs, args)
 }
 
-func TestDeleteBuilderToSqlErr(t *testing.T) {
-	_, _, err := Delete("").ToSql()
-	assert.Error(t, err)
-}
+//func TestDeleteBuilderToSqlErr(t *testing.T) {
+//	_, _, err := Delete("").ToSql()
+//	assert.Error(t, err)
+//}
 
 //func TestDeleteBuilderPlaceholders(t *testing.T) {
 //	b := Delete("test").Where("x = ? AND y = ?", 1, 2)

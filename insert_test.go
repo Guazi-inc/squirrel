@@ -16,8 +16,8 @@ func TestInsertBuilderToSql(t *testing.T) {
 		Values(3, Expr("? + 1", 4)).
 		Suffix("RETURNING ?", 5)
 
-	sql, args, err := b.ToSql()
-	assert.NoError(t, err)
+	sql, args:= b.ToSql()
+	//assert.NoError(t, err)
 
 	expectedSql :=
 		"WITH prefix AS ? " +
@@ -29,21 +29,21 @@ func TestInsertBuilderToSql(t *testing.T) {
 	assert.Equal(t, expectedArgs, args)
 }
 
-func TestInsertBuilderToSqlErr(t *testing.T) {
-	_, _, err := Insert("").Values(1).ToSql()
-	assert.Error(t, err)
-
-	_, _, err = Insert("x").ToSql()
-	assert.Error(t, err)
-}
+//func TestInsertBuilderToSqlErr(t *testing.T) {
+//	_, _, err := Insert("").Values(1).ToSql()
+//	assert.Error(t, err)
+//
+//	_, _, err = Insert("x").ToSql()
+//	assert.Error(t, err)
+//}
 
 func TestInsertBuilderPlaceholders(t *testing.T) {
 	b := Insert("test").Values(1, 2)
 
-	sql, _, _ := b.PlaceholderFormat(Question).ToSql()
+	sql, _ := b.PlaceholderFormat(Question).ToSql()
 	assert.Equal(t, "INSERT INTO test VALUES (?,?)", sql)
 
-	sql, _, _ = b.PlaceholderFormat(Dollar).ToSql()
+	sql, _ = b.PlaceholderFormat(Dollar).ToSql()
 	assert.Equal(t, "INSERT INTO test VALUES ($1,$2)", sql)
 }
 //
@@ -67,8 +67,8 @@ func TestInsertBuilderPlaceholders(t *testing.T) {
 func TestInsertBuilderSetMap(t *testing.T) {
 	b := Insert("table").SetMap(Eq{"field1": 1})
 
-	sql, args, err := b.ToSql()
-	assert.NoError(t, err)
+	sql, args:= b.ToSql()
+	//assert.NoError(t, err)
 
 	expectedSql := "INSERT INTO table (field1) VALUES (?)"
 	assert.Equal(t, expectedSql, sql)

@@ -15,9 +15,9 @@ package squirrel
 //	qb := Select().
 //		Column(caseStmt).
 //		From("table")
-//	sql, args, err := qb.ToSql()
+//	sql, args := qb.ToSql()
 //
-//	assert.NoError(t, err)
+//	//assert.NoError(t, err)
 //
 //	expectedSql := "SELECT CASE number " +
 //		"WHEN 1 THEN one " +
@@ -38,9 +38,9 @@ package squirrel
 //	qb := Select().
 //		Column(Alias(caseStmt, "complexCase")).
 //		From("table")
-//	sql, args, err := qb.ToSql()
+//	sql, args := qb.ToSql()
 //
-//	assert.NoError(t, err)
+//	//assert.NoError(t, err)
 //
 //	expectedSql := "SELECT (CASE ? > ? " +
 //		"WHEN true THEN 'T' " +

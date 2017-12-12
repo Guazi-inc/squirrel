@@ -14,7 +14,7 @@ import (
 // ToSql returns a SQL representation of the Sqlizer, along with a slice of args
 // as passed to e.g. database/sql.Exec. It can also return an error.
 type Sqlizer interface {
-	ToSql() (string, []interface{}, error)
+	ToSql() (string, []interface{})
 }
 // DebugSqlizer calls ToSql on s and shows the approximate SQL to be executed
 //
@@ -26,10 +26,10 @@ type Sqlizer interface {
 // not try very hard to ensure it. Additionally, executing the output of this
 // function with any untrusted user input is certainly insecure.
 func DebugSqlizer(s Sqlizer) string {
-	sql, args, err := s.ToSql()
-	if err != nil {
-		return fmt.Sprintf("[ToSql error: %s]", err)
-	}
+	sql, args := s.ToSql()
+	//if err != nil {
+	//	return fmt.Sprintf("[ToSql error: %s]", err)
+	//}
 
 	// TODO: dedupe this with placeholder.go
 	buf := &bytes.Buffer{}

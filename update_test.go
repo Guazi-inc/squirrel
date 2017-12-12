@@ -18,8 +18,8 @@ func TestUpdateBuilderToSql(t *testing.T) {
 		Offset(5).
 		Suffix("RETURNING ?", 6)
 
-	sql, args, err := b.ToSql()
-	assert.NoError(t, err)
+	sql, args := b.ToSql()
+	//assert.NoError(t, err)
 
 	expectedSql :=
 		"WITH prefix AS ? " +
@@ -33,20 +33,20 @@ func TestUpdateBuilderToSql(t *testing.T) {
 }
 
 func TestUpdateBuilderToSqlErr(t *testing.T) {
-	_, _, err := Update("").Set("x", 1).ToSql()
-	assert.Error(t, err)
-
-	_, _, err = Update("x").ToSql()
-	assert.Error(t, err)
+	sql, args := Update("").Set("x", 1).ToSql()
+	//assert.Error(t, err)
+	t.Log(sql,args)
+	sql2, args1  := Update("x").ToSql()
+	t.Log(sql2,args1)
 }
 
 func TestUpdateBuilderPlaceholders(t *testing.T) {
 	b := Update("test").SetMap(Eq{"x": 1, "y": 2})
 
-	sql, _, _ := b.PlaceholderFormat(Question).ToSql()
+	sql, _ := b.PlaceholderFormat(Question).ToSql()
 	assert.Equal(t, "UPDATE test SET x = ?, y = ?", sql)
 
-	sql, _, _ = b.PlaceholderFormat(Dollar).ToSql()
+	sql, _ = b.PlaceholderFormat(Dollar).ToSql()
 	assert.Equal(t, "UPDATE test SET x = $1, y = $2", sql)
 }
 
@@ -67,7 +67,7 @@ func TestUpdateBuilderPlaceholders(t *testing.T) {
 //	assert.Equal(t, RunnerNotSet, err)
 //}
 func TestUpdateBuilder_IncrBy(t *testing.T) {
-	a, _, _ := Update("test").Set("x", 1).IncrBy("a", 1).ToSql()
+	a, _:= Update("test").Set("x", 1).IncrBy("a", 1).ToSql()
 	expectedSql := "UPDATE test SET x = ?, a = a+?"
 	assert.Equal(t, expectedSql, a)
 }
