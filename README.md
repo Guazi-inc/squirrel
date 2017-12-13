@@ -1,5 +1,6 @@
 # Squirrel - fluent SQL generator for Go
 
+
 ```go
 import "gopkg.in/Masterminds/squirrel.v1"
 ```
