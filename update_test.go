@@ -33,10 +33,10 @@ func TestUpdateBuilderToSql(t *testing.T) {
 }
 
 func TestUpdateBuilderToSqlErr(t *testing.T) {
-	sql, args := Update("").Set("x", 1).ToSql()
+	sql, args := Update("a").Set("x", 1).ToSql()
 	//assert.Error(t, err)
 	t.Log(sql,args)
-	sql2, args1  := Update("x").ToSql()
+	sql2, args1  := Update("x").Set("sa",1).ToSql()
 	t.Log(sql2,args1)
 }
 
