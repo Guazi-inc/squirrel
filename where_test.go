@@ -1,7 +1,6 @@
 package squirrel
 
 import (
-	"fmt"
 	"testing"
 
 	"bytes"
@@ -21,31 +20,32 @@ func TestWherePartsAppendToSql(t *testing.T) {
 	assert.Equal(t, []interface{}{1, 2}, args)
 }
 
-func TestWherePartsAppendToSqlErr(t *testing.T) {
-	parts := []Sqlizer{newWherePart(1)}
-	_, err := appendToSql(parts, &bytes.Buffer{}, "", []interface{}{})
-	assert.Error(t, err)
-}
+//func TestWherePartsAppendToSqlErr(t *testing.T) {
+//	parts := []Sqlizer{newWherePart(1)}
+//	_, err := appendToSql(parts, &bytes.Buffer{}, "", []interface{}{})
+//	assert.Error(t, err)
+//}
 
 func TestWherePartNil(t *testing.T) {
-	sql, _, _ := newWherePart(nil).ToSql()
+	sql, _:= newWherePart(nil).ToSql()
 	assert.Equal(t, "", sql)
 }
 
-func TestWherePartErr(t *testing.T) {
-	_, _, err := newWherePart(1).ToSql()
-	assert.Error(t, err)
-}
+//func TestWherePartErr(t *testing.T) {
+//	sql, args := newWherePart(1).ToSql()
+//	//assert.Error(t, err)
+//	t.Log(sql,args)
+//}
 
 func TestWherePartString(t *testing.T) {
-	sql, args, _ := newWherePart("x = ?", 1).ToSql()
+	sql, args := newWherePart("x = ?", 1).ToSql()
 	assert.Equal(t, "x = ?", sql)
 	assert.Equal(t, []interface{}{1}, args)
 }
 
 func TestWherePartMap(t *testing.T) {
 	test := func(pred interface{}) {
-		sql, _, _ := newWherePart(pred).ToSql()
+		sql, _ := newWherePart(pred).ToSql()
 		expect := []string{"x = ? AND y = ?", "y = ? AND x = ?"}
 		if sql != expect[0] && sql != expect[1] {
 			t.Errorf("expected one of %#v, got %#v", expect, sql)
@@ -54,9 +54,4 @@ func TestWherePartMap(t *testing.T) {
 	m := map[string]interface{}{"x": 1, "y": 2}
 	test(m)
 	test(Eq(m))
-}
-
-func TestWherePartNoArgs(t *testing.T) {
-	_, _, err := newWherePart(Eq{"test": []string{}}).ToSql()
-	assert.Equal(t, err, fmt.Errorf("equality condition must contain at least one paramater"))
 }
