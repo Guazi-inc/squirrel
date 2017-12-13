@@ -20,22 +20,22 @@ func TestWherePartsAppendToSql(t *testing.T) {
 	assert.Equal(t, []interface{}{1, 2}, args)
 }
 
-func TestWherePartsAppendToSqlErr(t *testing.T) {
-	parts := []Sqlizer{newWherePart(1)}
-	_, err := appendToSql(parts, &bytes.Buffer{}, "", []interface{}{})
-	assert.Error(t, err)
-}
+//func TestWherePartsAppendToSqlErr(t *testing.T) {
+//	parts := []Sqlizer{newWherePart(1)}
+//	_, err := appendToSql(parts, &bytes.Buffer{}, "", []interface{}{})
+//	assert.Error(t, err)
+//}
 
 func TestWherePartNil(t *testing.T) {
 	sql, _:= newWherePart(nil).ToSql()
 	assert.Equal(t, "", sql)
 }
 
-func TestWherePartErr(t *testing.T) {
-	sql, args := newWherePart(1).ToSql()
-	//assert.Error(t, err)
-	t.Log(sql,args)
-}
+//func TestWherePartErr(t *testing.T) {
+//	sql, args := newWherePart(1).ToSql()
+//	//assert.Error(t, err)
+//	t.Log(sql,args)
+//}
 
 func TestWherePartString(t *testing.T) {
 	sql, args := newWherePart("x = ?", 1).ToSql()
