@@ -8,7 +8,7 @@ or if you prefer using `master` (which may be arbitrarily ahead of or behind `v1
 
 **NOTE:** as of Go 1.6, `go get` correctly clones the Github default branch (which is `v1` in this repo).
 ```go
-import "github.com/fluge/squirrel"
+import "github.com/fluge1`/squirrel"
 ```
 
 [![GoDoc](https://godoc.org/github.com/Masterminds/squirrel?status.png)](https://godoc.org/github.com/Masterminds/squirrel)
