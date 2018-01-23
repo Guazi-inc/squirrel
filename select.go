@@ -70,13 +70,16 @@ func (d *selectData) ToSql() (sqlStr string, args []interface{}) {
 			return
 		}
 	}
-
 	if len(d.WhereParts) > 0 {
-		sql.WriteString(" WHERE ")
-		args, err = appendToSql(d.WhereParts, sql, " AND ", args)
-		if err != nil {
-			panic(err)
-			return
+		if partSql, _ := d.WhereParts[0].ToSql(); len(d.WhereParts) == 1 && len(partSql) == 0 {
+			// 注释： Condition()会加入一个空数据 此处过滤
+		} else {
+			sql.WriteString(" WHERE ")
+			args, err = appendToSql(d.WhereParts, sql, " AND ", args)
+			if err != nil {
+				panic(err)
+				return
+			}
 		}
 	}
 
