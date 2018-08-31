@@ -122,7 +122,7 @@ func (b WhereBuilder) Where(pred interface{}, args ...interface{}) WhereConditio
 
 //Condition
 func (b WhereBuilder) Condition() WhereConditions {
-	return builder.Append(b, "WhereParts", newWherePart("")).(WhereBuilder)
+	return b
 }
 
 //expr

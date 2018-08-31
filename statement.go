@@ -38,7 +38,7 @@ func (b StatementBuilderType) Where(pred interface{}, args ...interface{}) Where
 }
 
 func (b StatementBuilderType) Condition() WhereConditions {
-	return WhereBuilder(b).Where("")
+	return WhereBuilder(b).Condition()
 }
 
 func (b StatementBuilderType) Join(join string, rest ...interface{}) JoinCondition {
